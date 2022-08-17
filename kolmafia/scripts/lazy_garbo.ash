@@ -145,7 +145,7 @@ void main(string arg){
         visit_url("choice.php");
         run_choice(1);
     } // turn chibibuddy on
-    cli_execute("ChibiParent"); // call decent chibi management script
+    if (item_amount($item[ChibiBuddy&trade; (on)]) > 0) cli_execute("ChibiParent"); // call decent chibi management script
     if (get_property("dinseyRapidPassEnabled") == true){
         visit_url("place.php?whichplace=airport_stench&action=airport3_tunnels");
         run_choice(1);
