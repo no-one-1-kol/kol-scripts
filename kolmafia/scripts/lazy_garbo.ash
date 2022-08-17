@@ -1,4 +1,4 @@
-import <clan_stash.ash>;
+import <clan-stash.ash>;
 boolean skip_items = true; //skip having all stash items to run garbo?
 int vOA = 6000; // base value of adventure
 
@@ -37,18 +37,18 @@ void ro(){
         if (have_skill($skill[The Ode to Booze])) use_skill($skill[The Ode to Booze]);
         else cli_execute("/whisper buffy ode to booze");
     }
-    use_familiar($familiar[stooper]);
+    if (have_familiar($familiar[stooper]) && my_inebriety() <= inebriety_limit()) use_familiar($familiar[stooper]);
     if (my_inebriety() < (inebriety_limit()-1)){
         abort("Something went wrong probably");
     }
     if (my_inebriety() < inebriety_limit()){
-        if (item_amount($item[tiny stillsuit])) > 0{
+        if (item_amount($item[tiny stillsuit]) > 0){
             equip($item[tiny stillsuit]);
             visit_url("inventory.php?action=distill&pwd='+pwdhash+'");
             visit_url("choice.php");
             run_choice(1);
         }
-        else if (item_amount($item[Cold One])>0){
+        else if (item_amount($item[Cold One]) > 0){
             drink($item[Cold One]);
         }
         else{
@@ -110,6 +110,7 @@ void main(string arg){
         create(stills_available(),$item[kiwi]);
     } // Nash Crosby Still
     if (get_property("_tonicDjinn")==false){
+        cli_execute("acquire tonic djinn");
         visit_url("inv_use.php?pwd=0a2614e9f1c980fdd2c7ca5de8aa6f1f&which=3&whichitem=6421");
         run_choice(1);
     } // tonic djinn meat
@@ -122,6 +123,10 @@ void main(string arg){
     } // Pantagramming
     if (my_class() == $class[seal clubber]){
         vOA = vOA + 300;
+    }
+    if (have_familiar($familiar[robortender]) && get_property("_roboDrinks") == ""){
+        use_familiar($familiar[robortender]);
+        cli_execute("robo newark, feliz navidad, drive-by shooting, single entendre");
     }
     set_property("garbo_vipClan", "redemption city"); // Set prefs for garbo
     set_property("garbo_stashClan", "redemption city");
@@ -154,26 +159,26 @@ void main(string arg){
         }
         else print("stash items missing","red");
     }
-    else if(arg == "nobarf"){
+    else if(arg == "nobarf" || arg == "nb"){
         if (clan_stash("check") || skip_items){
             print("running garbo nobarf", "blue");
             cli_execute("garbo nobarf");
         }
         else print("stash items missing","red");
     }
-    else if(arg == "ascend"){
+    else if(arg == "ascend" || arg == "a"){
         if (clan_stash("check") || skip_items){
             print("running garbo ascend", "blue");
             cli_execute("garbo ascend");
         }
         else print("stash items missing","red");
     }
-    else if(arg == "nogarbo") print("skipping garbo completely", "blue");
-    else if(arg == "ro"){
+    else if(arg == "nogarbo" || arg == "ng") print("skipping garbo completely", "blue");
+    else if(arg == "rollover" || arg == "ro"){
         print("doing rollover stuff");
         ro();
     }
-    else if(arg == "y"){
+    else if(arg == "yachtzeechain" || arg == "y"){
         if (clan_stash("check") || skip_items){
             print("running garbo yachtzeechain", "blue");
             use($item[one-day ticket to Spring Break Beach]);
@@ -181,6 +186,18 @@ void main(string arg){
             ro();
         }
         else print("stash items missing","red");
+    }
+    else if(arg == "help" || arg == "h"){
+        print("lazy_garbo help:", "blue");
+        print("Arguments: ");
+        print("help / h: displays this message");
+        print("0 / blank / random stuff: runs start of day stuff then garbo normally then rollover instructions");
+        print("any integer (negatives included): runs start of day stuff then garbo with that number of turns (negative means to leave the number of turns at the end");
+        print("ascend / a: runs start of day stuff then garbo ascend");
+        print("nobarf / nb: runs start of day stuff then garbo nobarf");
+        print("nogarbo / ng: runs start of day stuff only");
+        print("yachtzeechain / y: runs start of day stuff then garbo yachtzeechain then rollover instructions");
+        print("rollover / ro: runs start of day stuff then rollover instructions");
     }
     else{
         if (clan_stash("check") || skip_items){
