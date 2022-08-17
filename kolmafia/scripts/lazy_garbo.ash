@@ -75,6 +75,7 @@ void ro(){
     }
     put_stash($item[938], 1); //tiny plastic sword
     }
+    if (have_familiar($familiar[Trick-or-Treating Tot]) && item_amount($item[Li'l unicorn costume]) > 0) use_familiar($familiar[Trick-or-Treating Tot]);
     if (have_familiar($familiar[left-hand man])) use_familiar($familiar[left-hand man]);
     if (item_amount($item[burning cape]) == 0 && item_amount($item[vampyric cloake]) == 0 || get_property("valueOfAdventure") > mall_price($item[burning newspaper])){
         cli_execute("acquire burning cape");
