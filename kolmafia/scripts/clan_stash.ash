@@ -76,17 +76,16 @@ void put_all_stash() {
 	print("Finished", "green");	
 }
 
-void clan_stash(string arg) {
+boolean clan_stash(string arg) {
 	if (get_clan_name() != "Redemption City"){
 		print("Not in correct clan");
-		return;
+		return false;
 	}
 	switch (arg) {
 		case "":
 		case " ":
 		case "check":
-			check_all_but_shield_stash();			
-			break;
+			return(check_all_but_shield_stash());			
 		case "take":
 			if (check_all_stash()) {
 				take_all_stash();
@@ -96,6 +95,7 @@ void clan_stash(string arg) {
 			put_all_stash();
 			break;
 	}
+	return false;
 }
 
 void main(string arg){

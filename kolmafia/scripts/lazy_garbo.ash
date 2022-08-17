@@ -1,6 +1,6 @@
 import <clan_stash.ash>;
-boolean skip_items = false; //skip having all stash items to run garbo?
-int vOA = 4500; // base value of adventure
+boolean skip_items = true; //skip having all stash items to run garbo?
+int vOA = 6000; // base value of adventure
 
 int handle_zatara() {
     if (get_property("_clanFortuneConsultUses") < 3) {
@@ -34,7 +34,7 @@ int handle_zatara() {
 void ro(){
     cli_execute("/whitelist redemption city");
     while (have_effect($effect[ode to booze]) < 10){
-        if have_skill($skill[The Ode to Booze]) use_skill($skill[The Ode to Booze]);
+        if (have_skill($skill[The Ode to Booze])) use_skill($skill[The Ode to Booze]);
         else cli_execute("/whisper buffy ode to booze");
     }
     use_familiar($familiar[stooper]);
