@@ -1,6 +1,7 @@
 import <clan-stash.ash>;
 boolean skip_items = true; //skip having all stash items to run garbo?
 int vOA = 6000; // base value of adventure
+boolean pantagram = false; //use pantagram?
 
 int handle_zatara() {
     if (get_property("_clanFortuneConsultUses") < 3) {
@@ -115,7 +116,7 @@ void main(string arg){
         visit_url("inv_use.php?pwd=0a2614e9f1c980fdd2c7ca5de8aa6f1f&which=3&whichitem=6421");
         run_choice(1);
     } // tonic djinn meat
-    if (get_property("_pantogramModifier") == ""){
+    if (get_property("_pantogramModifier") == "" && !pantagram){
         if(item_amount($item[lead necklace]) < 11){
             buy($item[lead necklace], 11, 3000);
         }
@@ -124,10 +125,6 @@ void main(string arg){
     } // Pantagramming
     if (my_class() == $class[seal clubber]){
         vOA = vOA + 300;
-    }
-    if (have_familiar($familiar[robortender]) && get_property("_roboDrinks") == ""){
-        use_familiar($familiar[robortender]);
-        cli_execute("robo newark, feliz navidad, drive-by shooting, single entendre");
     }
     set_property("garbo_vipClan", "redemption city"); // Set prefs for garbo
     set_property("garbo_stashClan", "redemption city");
