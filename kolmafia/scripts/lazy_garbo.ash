@@ -33,7 +33,6 @@ int handle_zatara() {
 }
 
 void ro(){
-    cli_execute("/whitelist redemption city");
     while (have_effect($effect[ode to booze]) < 10){
         if (have_skill($skill[The Ode to Booze])) use_skill($skill[The Ode to Booze]);
         else cli_execute("/whisper buffy ode to booze");
@@ -42,7 +41,7 @@ void ro(){
     if (my_inebriety() < (inebriety_limit()-1)){
         abort("Something went wrong probably");
     }
-    if (my_inebriety() < inebriety_limit()){
+    if (my_inebriety() < inebriety_limit()){ //stooper drink
         if (item_amount($item[tiny stillsuit]) > 0){
             equip($item[tiny stillsuit]);
             visit_url("inventory.php?action=distill&pwd='+pwdhash+'");
@@ -54,24 +53,26 @@ void ro(){
         }
         else{
             drink($item[Elemental caipiroska]);
-        } //stooper drink
+        }
     }
     if (my_inebriety() < inebriety_limit()){
         abort("Something went wrong probably");
     }
     else if(my_level() >= 6 && my_inebriety() == inebriety_limit()){
+        cli_execute("/whitelist redemption city");
         if (item_amount($item[emergency margarita]) > 0) overdrink($item[emergency margarita]); //normal nightcap
         else if (stash_amount($item[938]) > 0){ 
             take_stash($item[938], 1); //tiny plastic sword
             if (item_amount($item[grogtini]) > 0){
                 overdrink($item[grogtini]);
             }
-            else if (item_amount($item[938]) /*tiny plastic sword*/ > 0 && item_amount($item[333]) /*lime*/ > 1 && item_amount($item[787]) /*bottle of rum*/ > 0){
+            else if (item_amount($item[938]) /*tiny plastic sword*/ > 0 && item_amount($item[333]) /*lime*/ > 1 && item_amount($item[787]) /*bottle of rum*/ > 0){ //make a grogtini
                 cli_execute("mix grogtini");
                 overdrink($item[grogtini]);
             }
-        } //make a grogtini
-    else{
+        }
+    else if (my_level() >= 11 && my_inebriety() == inebriety_limit()){ //backup nightcap
+        cli_execute("acquire Psychotic Train wine");
         overdrink($item[Psychotic Train wine]);
     }
     put_stash($item[938], 1); //tiny plastic sword
@@ -90,9 +91,13 @@ void ro(){
 }
 
 void main(string arg){
+    if( holiday().to_lower_case() == "halloween"){
+        print("Warning: Today is halloween, will continue to run script in 15 seconds.", "red");
+        wait(15);
+    }
     handle_zatara();
     cli_execute("/whitelist redemption city");
-    if (get_property("_chronerCrossUsed") == false){
+    if (get_property("_chronerCrossUsed") == false){ // Do daily events in clan that may not be covered
         cli_execute("shower ice");
         take_stash($item[picky tweezers], 1);
         use($item[picky tweezers], 1);
@@ -103,26 +108,26 @@ void main(string arg){
         take_stash($item[chroner cross], 1);
         use($item[chroner cross], 1);
         put_stash($item[chroner cross], 1);
-    } // Do daily events in clan that may not be covered
-    if (get_property("_discoKnife") == false){
+    }
+    if (get_property("_discoKnife") == false){ // Summon Knife
         use_skill($skill[That's Not a Knife]);
         put_closet($item[soap knife], item_amount($item[soap knife]));
-    } // Summon Knife
-    if (stills_available() > 0){
+    }
+    if (stills_available() > 0){ // Nash Crosby Still
         create(stills_available(),$item[kiwi]);
-    } // Nash Crosby Still
-    if (get_property("_tonicDjinn")==false){
+    }
+    if (get_property("_tonicDjinn")==false){ // tonic djinn meat
         cli_execute("acquire tonic djinn");
         visit_url("inv_use.php?pwd=0a2614e9f1c980fdd2c7ca5de8aa6f1f&which=3&whichitem=6421");
         run_choice(1);
-    } // tonic djinn meat
-    if (get_property("_pantogramModifier") == "" && !pantagram){
+    }
+    if (get_property("_pantogramModifier") == "" && pantagram){ // Pantagramming
         if(item_amount($item[lead necklace]) < 11){
             buy($item[lead necklace], 11, 3000);
         }
         cli_execute("acquire porquoise");
         cli_execute("pantogram mox|stench|max mp|clover|high meat|force|familiar|silent");
-    } // Pantagramming
+    }
     if (my_class() == $class[seal clubber]){
         vOA = vOA + 300;
     }
@@ -138,18 +143,18 @@ void main(string arg){
     if ((have_effect($effect[Feeling Lost]) < 0)){
         cli_execute("uneffect feel lost");
     }
-    if (item_amount($item[ChibiBuddy&trade; (off)]) == 1){
+    if (item_amount($item[ChibiBuddy&trade; (off)]) == 1){ // turn chibibuddy on
         visit_url("inv_use.php?pwd='+pwdhash+'&which=f2&whichitem=5925");
         visit_url("choice.php");
         run_choice(1);
-    } // turn chibibuddy on
+    } 
     if (item_amount($item[ChibiBuddy&trade; (on)]) > 0) cli_execute("ChibiParent"); // call decent chibi management script
-    if (get_property("dinseyRapidPassEnabled") == true){
+    if (get_property("dinseyRapidPassEnabled") == true){ // disable fast pass if it is enabled
         visit_url("place.php?whichplace=airport_stench&action=airport3_tunnels");
         run_choice(1);
         run_choice(2);
         run_choice(6);
-    } // disable fast pass if it is enabled
+    }
     if(arg.to_int() != 0){
         if (clan_stash("check") || skip_items){
             print("running garbo"+arg);
@@ -172,7 +177,7 @@ void main(string arg){
         else print("stash items missing","red");
     }
     else if(arg == "nogarbo" || arg == "ng") print("skipping garbo completely", "blue");
-    else if(arg == "rollover" || arg == "ro"){
+    else if(arg == "rollover" || arg == "ro" || arg == "r"){
         print("doing rollover stuff");
         ro();
     }
@@ -195,7 +200,7 @@ void main(string arg){
         print("nobarf / nb: runs start of day stuff then garbo nobarf");
         print("nogarbo / ng: runs start of day stuff only");
         print("yachtzeechain / y: runs start of day stuff then garbo yachtzeechain then rollover instructions");
-        print("rollover / ro: runs start of day stuff then rollover instructions");
+        print("rollover / ro / r: runs start of day stuff then rollover instructions");
     }
     else{
         if (clan_stash("check") || skip_items){
