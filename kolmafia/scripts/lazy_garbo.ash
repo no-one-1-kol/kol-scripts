@@ -1,13 +1,16 @@
 import <clan-stash.ash>;
-boolean skip_items = true; //skip having all stash items to run garbo?
+import <VotingBooth.ash>;
+
+boolean skip_items = true; // skip having all stash items to run garbo?
 int vOA = 6000; // base value of adventure
-boolean pantagram = false; //use pantagram?
+boolean pantagram = false; // use pantagram?
+boolean voter = false; // use voter? (absentee voter ballot will be used if no permanent access)
 
 int handle_zatara() {
     if (get_property("_clanFortuneConsultUses") < 3) {
         int retries = 12;
         string clan = "bonus adventures from hell"; // clan to consult in
-        string name = "cheesefax"; //person you want to consult
+        string name = "cheesefax"; // person you want to consult
         cli_execute("/whitelist " + clan);
         while ( retries > 0 ) {
             string page = visit_url( "clan_viplounge.php?preaction=lovetester", false );
@@ -91,11 +94,12 @@ void ro(){
 }
 
 void main(string arg){
-    if( holiday().to_lower_case() == "halloween"){
+    if (holiday().to_lower_case() == "halloween"){ //warn if holiday is halloween, should run freecandy.exe instead
         print("Warning: Today is halloween, will continue to run script in 15 seconds.", "red");
         wait(15);
     }
     handle_zatara();
+    voteInVotingBooth();
     cli_execute("/whitelist redemption city");
     if (get_property("_chronerCrossUsed") == false){ // Do daily events in clan that may not be covered
         cli_execute("shower ice");
@@ -114,7 +118,8 @@ void main(string arg){
         put_closet($item[soap knife], item_amount($item[soap knife]));
     }
     if (stills_available() > 0){ // Nash Crosby Still
-        create(stills_available(),$item[kiwi]);
+        if (item_amount($item[bottle of sewage schnapps]) > 0) create(stills_available(), $item[bottle of ooze-o]);
+        else create(stills_available(),$item[kiwi]);
     }
     if (get_property("_tonicDjinn")==false){ // tonic djinn meat
         cli_execute("acquire tonic djinn");
@@ -183,32 +188,43 @@ void main(string arg){
     }
     else if(arg == "yachtzeechain" || arg == "y"){
         if (clan_stash("check") || skip_items){
-            print("running garbo yachtzeechain", "blue");
-            use($item[one-day ticket to Spring Break Beach]);
-            cli_execute("garbo yachtzeechain");
-            ro();
+            if (get_property("_sleazeAirportToday").to_boolean() || item_amount($item[one-day ticket to Spring Break Beach]) > 0){
+                use($item[one-day ticket to Spring Break Beach]);
+                print("running garbo yachtzeechain", "blue");
+                cli_execute("garbo yachtzeechain");
+                ro();
+            }
+            else print("no way to access Spring Break Beach");
         }
         else print("stash items missing","red");
+    }
+    else if (arg == "0" || arg == ""){
+        if (clan_stash("check") || skip_items){
+            print("running garbo", "blue");
+            cli_execute("garbo");
+            ro();
+        }
+        else print("stash items missing", "red");
     }
     else if(arg == "help" || arg == "h"){
         print("lazy_garbo help:", "blue");
         print("Arguments: ");
         print("help / h: displays this message");
-        print("0 / blank / random stuff: runs start of day stuff then garbo normally then rollover instructions");
+        print("0 / blank: runs start of day stuff then garbo normally then rollover instructions");
         print("any integer (negatives included): runs start of day stuff then garbo with that number of turns (negative means to leave the number of turns at the end");
         print("ascend / a: runs start of day stuff then garbo ascend");
         print("nobarf / nb: runs start of day stuff then garbo nobarf");
         print("nogarbo / ng: runs start of day stuff only");
         print("yachtzeechain / y: runs start of day stuff then garbo yachtzeechain then rollover instructions");
         print("rollover / ro / r: runs start of day stuff then rollover instructions");
+        print("other stuff: runs start of day stuff then garbo +input");
     }
     else{
         if (clan_stash("check") || skip_items){
-            print("running garbo", "blue");
-            cli_execute("garbo");
-            ro();
+            print("running garbo " + arg, "blue");
+            cli_execute("garbo" + arg);
         }
-        else print("stash items missing","red");
+        else print("stash items missing", "red");
     }
     cli_execute("/whitelist redemption city");
     print("Script has finished running","blue");

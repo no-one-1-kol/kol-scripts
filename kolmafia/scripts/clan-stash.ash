@@ -50,6 +50,7 @@ boolean check_stash_lst(boolean [item] it_lst) {
 boolean check_all_stash() {
 	return check_stash_lst(all_items);
 }
+
 boolean check_all_but_shield_stash() {
 	return check_stash_lst(all_items_minus_shield);
 }
@@ -85,7 +86,7 @@ boolean clan_stash(string arg) {
 		case "":
 		case " ":
 		case "check":
-			return(check_all_but_shield_stash());			
+			return(check_all_Wstash());			
 		case "take":
 			if (check_all_stash()) {
 				take_all_stash();
